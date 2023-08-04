@@ -24,6 +24,7 @@ class Scraper:
             EC.presence_of_element_located((By.NAME, "password"))
         )
         login = self.driver.find_element(By.XPATH, '//*[@id="loginForm"]/div/div[3]/button')
+        # HINT: Input your username and password here
         username.send_keys('xxx')
         password.send_keys('xxx')
         login.click()
