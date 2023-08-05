@@ -1,7 +1,7 @@
-import sys
+import sys, os
 from PyQt5.QtWidgets import QApplication, QTabWidget
-from Tabs.InstagramTab import InstagramTab
-from Tabs.GettyImagesTab import GettyImagesTab
+from ImageScrape.Tabs.InstagramTab import InstagramTab
+from ImageScrape.Tabs.GettyImagesTab import GettyImagesTab
 
 class ScraperApp(QTabWidget):
     def __init__(self):
