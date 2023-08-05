@@ -59,33 +59,40 @@ class Scraper:
         
     def collect_pic(self):
         start = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/\
-                section/main/article/div/div/div/div[1]/div[1]'))
+            EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/main/article/div/div/div/div[1]/div[1]'))
         )
         start.click()
 
         time.sleep(2)
         
-        for count in range(5):
-            #Download pictures
+        for count in range(50):
+
+            # Candidate pictures
             div = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '._aagv img'))
             )
-            self.download_pic(div, count)
+            scrape_image = div.get_attribute('src')
+            print(scrape_image)
+
+            self.download_pic(scrape_image, count)
 
             time.sleep(2)
 
+            
             # Click to the next pic
+            next_button_xpath = '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div/div/div/button'
+            if count > 0:
+                next_button_xpath = '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[3]/div/div/div/div/div[1]/div/div/div[2]/button'
+            
             next_pic_button = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[3]/\
-                    div/div/div/div/div[1]/div/div/div/button'))
+                EC.presence_of_element_located((By.XPATH, next_button_xpath))
             )
             next_pic_button.click()
             
-    def download_pic(self, div, count):
-        print(div)
-        scrape_image = div.get_attribute('src')
-        
+            time.sleep(2)
+
+
+    def download_pic(self, scrape_image, count):
         tag_folder = os.path.join(self.keyword)
 
         if not os.path.exists(tag_folder):
@@ -107,7 +114,7 @@ class Scraper:
         else:
             print("Failed to download image")   
             
-        print('Start to download!')
+        # print('Start to download!')
          
         
     def start_to_scrape(self):
@@ -120,6 +127,7 @@ class Scraper:
         
         
 if __name__ == '__main__':
+    # HINT: Change to your own chromedriver path
     chrome_driver_path = '/Users/lcy/Development/chromedriver'
     
     # HINT: Input your username and password here
