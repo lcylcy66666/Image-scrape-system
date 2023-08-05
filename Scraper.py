@@ -128,5 +128,5 @@ if __name__ == '__main__':
     
     # HINT: You can change to your keyword
     keyword ='#corgi'
-    scrap = Scraper(chrome_driver_path, username, password)
+    scrap = Scraper(chrome_driver_path, username, password, keyword)
     scrap.start_to_scrape()
