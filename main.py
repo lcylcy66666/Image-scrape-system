@@ -1,80 +1,52 @@
-from selenium import webdriver
-from selenium.webdriver import ChromeOptions
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+import sys
+from Scraper import Scraper  
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout
 
-import time, os, wget
 
-class Scraper:
-    def __init__(self, driver_path) -> None:
-        ser = Service(driver_path)
-        options = ChromeOptions()
-        options.add_experimental_option('detach', True)
-        self.driver = webdriver.Chrome(service=ser, options=options)
-        self.driver.get('https://www.instagram.com/')
-        
-    def login(self):
-        username = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.NAME, "username"))
-        )
-        password = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.NAME, "password"))
-        )
-        login = self.driver.find_element(By.XPATH, '//*[@id="loginForm"]/div/div[3]/button')
-        # HINT: Input your username and password here
-        username.send_keys('xxx')
-        password.send_keys('xxx')
-        login.click()
-        
-    def search_keyword(self):
-        #Open the serch page
-        search_button = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[1]/div/div/div/div/div[2]/div[2]/span/div'))
-        )  
-        search_button.click()
-        
-        #Input your keyword
-        search_input = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[1]/ \
-                div/div/div[2]/div/div/div[2]/div/div/div[1]/div/div/input'))
-        )
-        search_input.send_keys('#corgi')
-    
-        #Select the keyword you want
-        select_the_keyword = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div/div/div[2]/ \
-                div/div/div/div[1]/div[1]/div[1]/div/div/div[2]/ \
-                div/div/div[2]/div/div/div[2]/div/a[1]/div[1]/div'))
-        )
-        select_the_keyword.click()
-        
-    def collect_pic(self):
-        start = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/\
-                section/main/article/div/div/div/div[1]/div[1]'))
-        )
-        start.click()
-        
-        # Click to the next pic
-        next_pic_button = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div/div/div[3]/div/div/div[1]/div/div[3]/\
-                div/div/div/div/div[1]/div/div/div/button'))
-        )
-        next_pic_button.click()
-        
-        
-    def start_to_scrape(self):
-        self.login()
-        self.search_keyword()
-        self.collect_pic()
-        
-        # self.driver.quit()
-        
-        
+class InstagramScraperApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.init_ui()
+
+    def init_ui(self):
+        #Set window size
+        self.resize(350, 350)  
+
+        self.username_input = QLineEdit(self)
+        self.username_input.setPlaceholderText("Username")
+
+        self.password_input = QLineEdit(self)
+        self.password_input.setPlaceholderText("Password")
+        self.password_input.setEchoMode(QLineEdit.Password)
+
+        self.keyword_input = QLineEdit(self)
+        self.keyword_input.setPlaceholderText("Keyword")
+
+        self.start_button = QPushButton("Start Scraping", self)
+        self.start_button.clicked.connect(self.start_scraping)
+
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel("Instagram Scraper"))
+        layout.addWidget(self.username_input)
+        layout.addWidget(self.password_input)
+        layout.addWidget(self.keyword_input)
+        layout.addWidget(self.start_button)
+
+        self.setLayout(layout)
+        self.setWindowTitle("Instagram Scraper")
+
+    def start_scraping(self):
+        username = self.username_input.text()
+        password = self.password_input.text()
+        keyword = self.keyword_input.text()
+        chrome_driver_path = '/Users/lcy/Development/chromedriver'
+
+        scrap = Scraper(chrome_driver_path, username, password, keyword)
+        scrap.start_to_scrape()
+
+
 if __name__ == '__main__':
-    chrome_driver_path = '/Users/lcy/Development/chromedriver'
-    scrap = Scraper(chrome_driver_path)
-    scrap.start_to_scrape()
+    app = QApplication(sys.argv)
+    window = InstagramScraperApp()
+    window.show()
+    sys.exit(app.exec_())
