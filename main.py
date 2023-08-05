@@ -1,5 +1,5 @@
 import sys
-from Scraper import Scraper  
+from Services.Scraper import Scraper  
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout
 
 
@@ -13,10 +13,10 @@ class InstagramScraperApp(QWidget):
         self.resize(350, 350)  
 
         self.username_input = QLineEdit(self)
-        self.username_input.setPlaceholderText("Username")
+        self.username_input.setPlaceholderText("IG Username")
 
         self.password_input = QLineEdit(self)
-        self.password_input.setPlaceholderText("Password")
+        self.password_input.setPlaceholderText("IG Password")
         self.password_input.setEchoMode(QLineEdit.Password)
 
         self.keyword_input = QLineEdit(self)
@@ -33,7 +33,7 @@ class InstagramScraperApp(QWidget):
         layout.addWidget(self.start_button)
 
         self.setLayout(layout)
-        self.setWindowTitle("Instagram Scraper")
+        self.setWindowTitle("Instagram Scraper System")
 
     def start_scraping(self):
         username = self.username_input.text()
