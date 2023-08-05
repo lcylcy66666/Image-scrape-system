@@ -9,7 +9,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 import time, os, requests
 
 class Scraper:
-    def __init__(self, driver_path, username, password, keyword) -> None:
+    def __init__(self, driver_path, URL, username, password, keyword) -> None:
+        self.URL = URL
         self.username = username
         self.password = password
         self.keyword = keyword
@@ -20,7 +21,7 @@ class Scraper:
         options = ChromeOptions()
         options.add_experimental_option('detach', True)
         driver = webdriver.Chrome(service=ser, options=options)
-        driver.get('https://www.instagram.com/')
+        driver.get(self.URL)
         return driver
     
     def login(self):
@@ -67,7 +68,7 @@ class Scraper:
         
         # self.driver.refresh()
 
-        for count in range(50):
+        for count in range(5):
             # Candidate pictures
             div = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '._aagv img'))
@@ -131,11 +132,12 @@ if __name__ == '__main__':
     # HINT: Change to your own chromedriver path
     chrome_driver_path = '/Users/lcy/Development/chromedriver'
     
-    # HINT: Input your username and password here
-    username= 'ponddytest123'
-    password='pythontest12345'
+    # HINT: Input your username and password and URL here
+    search_URL = 'https://www.instagram.com/'
+    username= 'xxx'
+    password='xxx'
     
     # HINT: You can change to your keyword
     keyword ='#corgi'
-    scrap = Scraper(chrome_driver_path, username, password, keyword)
+    scrap = Scraper(chrome_driver_path, search_URL, username, password, keyword)
     scrap.start_to_scrape()
