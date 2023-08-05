@@ -14,10 +14,11 @@ class Scraper:
         self.username = username
         self.password = password
         self.keyword = keyword
-        self.driver = self.setup_driver(driver_path)
+        self.driver_path = driver_path  # 初始化 self.driver_path
+        self.driver = self.setup_driver()
     
-    def setup_driver(self, driver_path):
-        ser = Service(driver_path)
+    def setup_driver(self):
+        ser = Service(self.driver_path)
         options = ChromeOptions()
         options.add_experimental_option('detach', True)
         driver = webdriver.Chrome(service=ser, options=options)
@@ -101,12 +102,12 @@ class Scraper:
             os.mkdir(tag_folder)
             print(f"Folder '{self.keyword}' created at {tag_folder}")
         else:
-            print(f"Folder '{self.keyword}' already exists at {tag_folder}")
+            pass
         
         save_as = os.path.join(tag_folder, self.keyword+str(count) + '.jpg')
         
         
-        #使用requests下載，wget還在測試
+        #Use requests to download
         response = requests.get(scrape_image)
         
         if response.status_code == 200:
