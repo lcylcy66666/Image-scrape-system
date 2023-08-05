@@ -62,19 +62,20 @@ class Scraper:
             EC.presence_of_element_located((By.XPATH, '/html/body/div[2]/div/div/div[2]/div/div/div/div[1]/div[1]/div[2]/section/main/article/div/div/div/div[1]/div[1]'))
         )
         start.click()
-
+        
         time.sleep(2)
         
-        for count in range(50):
+        # self.driver.refresh()
 
+        for count in range(50):
             # Candidate pictures
             div = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, '._aagv img'))
             )
             scrape_image = div.get_attribute('src')
-            print(scrape_image)
+            print('ING_URL: ', scrape_image)
 
-            self.download_pic(scrape_image, count)
+            # self.download_pic(scrape_image, count)
 
             time.sleep(2)
 
@@ -131,8 +132,8 @@ if __name__ == '__main__':
     chrome_driver_path = '/Users/lcy/Development/chromedriver'
     
     # HINT: Input your username and password here
-    username= 'xxx'
-    password='xxx'
+    username= 'ponddytest123'
+    password='pythontest12345'
     
     # HINT: You can change to your keyword
     keyword ='#corgi'
