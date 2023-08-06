@@ -1,9 +1,10 @@
-from ..Services.ScrapeGettyimages import GettyImagesScraper
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QDialog, QTabWidget,QHBoxLayout
+from PyQt5.QtWidgets import QApplication, QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import pyqtSignal, Qt
+from ..Services.ScrapeGettyimages import  GettyImagesThread
 
 class GettyImagesTab(QDialog):
+    
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Getty Images Scraper")
@@ -12,6 +13,7 @@ class GettyImagesTab(QDialog):
         layout = QVBoxLayout()
 
         url_layout = QHBoxLayout()  # Create a horizontal layout for URL input
+        
         url_label = QLabel("URL:")  # Create a QLabel for the label "URL"
         self.url_input = QLineEdit(self)
         self.url_input.setPlaceholderText("Getty Images URL")
@@ -38,16 +40,33 @@ class GettyImagesTab(QDialog):
         
         # Set font for the input fields
         font = QFont()
-        font.setPointSize(14)  # Set the font size
+        font.setPointSize(18)  
         self.url_input.setFont(font)
         self.keyword_input.setFont(font)
+        
+        # Initialize getty_scraper attribute
+        self.getty_scraper = None  
     
     def start_scraping(self):
         chrome_driver_path = '/Users/lcy/Development/chromedriver'
         getty_url = self.url_input.text()
         keyword = self.keyword_input.text()
 
-        # Add your Getty Images scraping logic here
-        getty_scraper = GettyImagesScraper(chrome_driver_path, getty_url, keyword)
-        getty_scraper.start_scraping_getty_images()
-        print("Scraping Getty Images:", getty_url, "with keyword:", keyword)
+        # Create Qt.Thraed instance
+        self.getty_thread = GettyImagesThread(chrome_driver_path, getty_url, keyword)
+
+        # connect to slot siginal
+        self.getty_thread.finished.connect(self.on_getty_thread_finished)
+
+        # Start Thread
+        self.getty_thread.start()
+
+    # After finish then can write some next step here.
+    def on_getty_thread_finished(self):
+        print("Getty Images scraping thread finished")
+        
+if __name__ == '__main__':
+    app = QApplication([])
+    window = GettyImagesTab()
+    window.show()
+    app.exec_()
