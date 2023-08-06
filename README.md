@@ -8,6 +8,7 @@
 3. Images will download in root/Collections/xxx <br>
     <font color='red'>XXX means the keyword you type</font>
 
+![progressbar](./images/Progress-bar-and-log.png)
 ![gettymimageUI](./images/getty-images-UI.png)
 
 ***
