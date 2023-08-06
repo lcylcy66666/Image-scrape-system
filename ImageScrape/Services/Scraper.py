@@ -14,7 +14,7 @@ class Scraper:
         self.username = username
         self.password = password
         self.keyword = keyword
-        self.driver_path = driver_path  # 初始化 self.driver_path
+        self.driver_path = driver_path  
         self.driver = self.setup_driver()
     
     def setup_driver(self):

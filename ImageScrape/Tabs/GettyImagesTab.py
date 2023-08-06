@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QApplication, QDialog, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QProgressBar,QTextEdit
 from PyQt5.QtGui import QFont, QKeyEvent
 from PyQt5.QtCore import pyqtSignal, Qt
-from ..Services.ScrapeGettyimages import  GettyImagesThread
-
+from ..Services.ScrapeGettyimages import  GettyImagesScraper
+import time
 class GettyImagesTab(QDialog):
     
     def __init__(self):
@@ -17,7 +17,7 @@ class GettyImagesTab(QDialog):
         url_label = QLabel("URL:")
         self.url_input = QLineEdit(self)
         self.url_input.setPlaceholderText("Getty Images URL")
-        self.url_input.setText("https://www.gettyimages.hk/")  # Set default URL
+        self.url_input.setText("https://www.gettyimages.hk/") 
         url_layout.addWidget(url_label)
         url_layout.addWidget(self.url_input)
 
@@ -40,9 +40,14 @@ class GettyImagesTab(QDialog):
         
         # Create progress bar layout
         self.progress_bar = QProgressBar(self)
-
+        self.progress_bar.setStyleSheet(
+            "QProgressBar { border: none; background-color: #EAEAEA; text-align: center; }"
+            "QProgressBar::chunk { background-color: #4CAF50; width: 10px; }"
+        )
+        self.progress_bar.setAlignment(Qt.AlignCenter)
+        
         self.log_text_edit = QTextEdit(self)
-        self.log_text_edit.setReadOnly(True)  # 设置为只读
+        self.log_text_edit.setReadOnly(True) 
 
         # Add layouts to main layout
         layout.addLayout(url_layout)
@@ -75,13 +80,48 @@ class GettyImagesTab(QDialog):
         getty_url = self.url_input.text()
         keyword = self.keyword_input.text()
 
-        self.getty_thread = GettyImagesThread(chrome_driver_path, getty_url, keyword)
-        self.getty_thread.progress.connect(self.update_progress)
+        # Reset progress bar to zero
+        self.progress_bar.setValue(0)
+        
+        self.getty_thread = GettyImagesScraper(chrome_driver_path, getty_url, keyword)
+        
+        # Connect the src_list_received signal to receive_src_list method
+        self.getty_thread.src_list_received.connect(self.receive_src_list)
+        self.getty_thread.dowload_finish.connect(self.receive_src_list)
+        self.getty_thread.progress_hint.connect(self.receive_src_list)
+        self.getty_thread.dowload_progress.connect(self.update_progress)
+
         self.getty_thread.finished.connect(self.on_getty_thread_finished)
         self.getty_thread.start()
 
-    def update_progress(self, value):
-        self.progress_bar.setValue(value)
+    # Slot function to receive src_list from GettyImagesScraper
+    def receive_src_list(self, message):
+        if isinstance(message, bool):
+            self.append_to_log("All images downloaded successfully! ")
+        elif isinstance(message, list):
+            #message = src_list
+            self.total_images = len(message)
+            keyword = self.keyword_input.text()
+            self.append_to_log("Downloading Images " + keyword + '....')
+        elif isinstance(message, str):
+            self.append_to_log(message)
+        else:
+            print("Received unsupported signal type")
+
+    def append_to_log(self, text):
+        self.log_text_edit.append(text)
+            
+    def update_progress(self, progress_state):
+        progress_percentage = int(progress_state*100  / self.total_images)
+        # Set the new value without style conflict
+        self.progress_bar.setValue(progress_percentage)
+        
+        # Apply style sheet again
+        self.progress_bar.setStyleSheet(
+            "QProgressBar { border: none; background-color: #EAEAEA; text-align: center; }"
+            "QProgressBar::chunk { background-color: #4CAF50; width: 10px; }"
+        )
+        self.progress_bar.setAlignment(Qt.AlignCenter)
         
     def on_getty_thread_finished(self):
         print("Getty Images scraping thread finished")

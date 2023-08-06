@@ -12,30 +12,20 @@ sys.path.append(root_dir)
 from ImageScrape.Services.Scraper import Scraper
 
 
-class GettyImagesThread(QThread):
-    # For send signal
-    finished = pyqtSignal()  
-
-    def __init__(self, driver_path, getty_url, keyword):
-        super().__init__()
-        self.driver_path = driver_path
-        self.getty_url = getty_url
-        self.keyword = keyword
-
-    def run(self):
-        getty_scraper = GettyImagesScraper(self.driver_path, self.getty_url, self.keyword)
-        getty_scraper.start_scraping_getty_images()
-        # Emit mission complete signal
-        self.finished.emit()  
-
-class GettyImagesScraper(Scraper):
-
-    def __init__(self, driver_path, URL, keyword) -> None:
-        # Pass the reference I need
+class GettyImagesScraper(Scraper, QThread):
+    src_list_received = pyqtSignal(list)  # Define a new signal
+    dowload_progress = pyqtSignal(int)
+    dowload_finish = pyqtSignal(bool)
+    progress_hint = pyqtSignal(str)
+    
+    # Define a signal for progress display    
+    def __init__(self, driver_path, URL, keyword):
         super().__init__(driver_path, URL, keyword, "", "")  
+        QThread.__init__(self)  # Call QThread's constructor
+
         self.src_list = []
 
-    def start_scraping_getty_images(self):
+    def run(self):
         try:
             search_input = WebDriverWait(self.driver, 10).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, 'input[name="phrase"]'))
@@ -47,13 +37,21 @@ class GettyImagesScraper(Scraper):
             )
             search_click.click()
             
-            total_pages_element = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.CLASS_NAME, 'JO4Dw2C5EjCB3iovKUcw'))
-            )
-            total_pages = total_pages_element.text
-                        
+            # Cause getty images will prevent BOT so sometimes can't access data
+            
+            try:
+                total_pages_element = WebDriverWait(self.driver, 10).until(
+                    EC.element_to_be_clickable((By.CLASS_NAME, 'JO4Dw2C5EjCB3iovKUcw'))
+                )
+                total_pages = total_pages_element.text
+            except TimeoutException:
+                print("Total pages element not found within 10 seconds.")
+                self.driver.quit()  
+
+            
             for page in range(int(total_pages)):
                 print('Loading Page: ', page)
+                self.progress_hint.emit(f"Loading page: {page}")
                 
                 if page < int(total_pages) - 1:
                     try:
@@ -74,7 +72,7 @@ class GettyImagesScraper(Scraper):
                             self.src_list.append(src)
                         
                         next_button.click()
-                        time.sleep(1)
+                        time.sleep(2)
                         
                     except TimeoutException:
                         print("Last page reached. Exiting loop.")
@@ -85,18 +83,24 @@ class GettyImagesScraper(Scraper):
                 
             # Finish scraping and close driver
             self.driver.quit()
+            
+            # Emit the src_list_received signal
+            self.src_list_received.emit(self.src_list)
+            
         except Exception as e:
             print('Error in scraping getty-images: ', e)
+            return
             
         print('Total Images: ', len(self.src_list))
         
         # Download the pictures
         for i in range(len(self.src_list)):
+            self.dowload_progress.emit(i)
             self.download_pic(self.src_list[i], i)
-        
-        print("Scraping Getty Images:", self.URL)
-        print('Now bot are scraping for', self.keyword)
-
+        # Download successfully signale emit
+        self.dowload_finish.emit(True)  
+        # print("Scraping Getty Images:", self.URL)
+        # print('Now bot are scraping for', self.keyword)
 
 if __name__ == '__main__':
     chrome_driver_path = '/Users/lcy/Development/chromedriver'
@@ -104,4 +108,4 @@ if __name__ == '__main__':
     keyword = "corgi"
     
     getty_scraper = GettyImagesScraper(chrome_driver_path, getty_url, keyword)
-    getty_scraper.start_scraping_getty_images()
+    getty_scraper.run()
