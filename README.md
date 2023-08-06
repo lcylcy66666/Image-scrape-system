@@ -1,10 +1,15 @@
 # Instagram-image-scrape
-Selenium+pyqt5 side project
 
 ## IG scraper user interface
 
-
+### Scrape gettyimages tab
+1. The default URL value is gettyimages page.
+2. Just type the keyword and the click start scraping.
+   
+![gettymimageUI](./images/getty-images-UI.png)
 ### Scrape IG tab
+1. Type IG URL and then input your username password keyword on it
+   
 ![UI-pic](./images/New-version-ui.png)
 
 ### Scrape Getty-images tab
