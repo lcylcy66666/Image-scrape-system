@@ -96,7 +96,7 @@ class Scraper:
 
 
     def download_pic(self, scrape_image, count):
-        collections_folder = os.path.join(os.path.dirname(__file__), "collections")  # Path to the 'collections' folder
+        collections_folder = os.path.join(os.path.dirname(__file__), "..", "..", "collections")  # Path to the 'collections' folder
 
         if not os.path.exists(collections_folder):
             os.mkdir(collections_folder)

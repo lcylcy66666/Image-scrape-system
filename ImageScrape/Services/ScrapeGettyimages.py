@@ -2,14 +2,31 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from PyQt5.QtCore import QThread, pyqtSignal
 
-import time, os, requests, sys
+import time, os, sys
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(os.path.dirname(current_dir))
 sys.path.append(root_dir)
-
 from ImageScrape.Services.Scraper import Scraper
+
+
+class GettyImagesThread(QThread):
+    # For send signal
+    finished = pyqtSignal()  
+
+    def __init__(self, driver_path, getty_url, keyword):
+        super().__init__()
+        self.driver_path = driver_path
+        self.getty_url = getty_url
+        self.keyword = keyword
+
+    def run(self):
+        getty_scraper = GettyImagesScraper(self.driver_path, self.getty_url, self.keyword)
+        getty_scraper.start_scraping_getty_images()
+        # Emit mission complete signal
+        self.finished.emit()  
 
 class GettyImagesScraper(Scraper):
 
@@ -35,8 +52,7 @@ class GettyImagesScraper(Scraper):
             )
             total_pages = total_pages_element.text
                         
-            # FIXEME: Get total pages and get every page pictures
-            for page in range(int('5')):
+            for page in range(int(total_pages)):
                 print('Loading Page: ', page)
                 
                 if page < int(total_pages) - 1:
