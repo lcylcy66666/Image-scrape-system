@@ -1,4 +1,4 @@
-import sys, os
+import sys
 from PyQt5.QtWidgets import QApplication, QTabWidget
 from ImageScrape.Tabs.InstagramTab import InstagramTab
 from ImageScrape.Tabs.GettyImagesTab import GettyImagesTab
