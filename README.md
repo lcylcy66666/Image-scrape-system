@@ -9,13 +9,15 @@
     <b> XXX means the keyword you type 
 
 ![gettymimageUI](./images/getty-images-UI.png)
+
+***
+
 ### Scrape IG tab
 1. Type IG URL and then input your username password keyword on it
    
 ![UI-pic](./images/New-version-ui.png)
 
-### Scrape Getty-images tab
-<b>Features on the way.</b>
+***
 
 ### How to use and run
 <b>Way1:</b>
@@ -31,8 +33,10 @@ In the end of Services/Scraper.py, you can change the username/password/keyword 
 After revise that, you can run this py file to scrape.
 </p>
 
+***
 
-# Features
+# Features demo
+
 ## gettyimages scrape
 [gettyimages-scrape-BOT](https://youtu.be/SwVbu-BiF6g)
 
