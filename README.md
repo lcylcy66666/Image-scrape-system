@@ -5,8 +5,8 @@
 ### Scrape gettyimages tab
 1. The default URL value is gettyimages page.
 2. Just type the keyword and the click start scraping.
-3. Images will download in root/Collections/xxx </br>
-    <b> XXX means the keyword you type 
+3. Images will download in root/Collections/xxx <br>
+    <font color='red'>XXX means the keyword you type</font>
 
 ![gettymimageUI](./images/getty-images-UI.png)
 
