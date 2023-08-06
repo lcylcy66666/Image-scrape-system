@@ -5,7 +5,9 @@
 ### Scrape gettyimages tab
 1. The default URL value is gettyimages page.
 2. Just type the keyword and the click start scraping.
-   
+3. Images will download in root/Collections/xxx 
+    <b> XXX means the keyword you type 
+
 ![gettymimageUI](./images/getty-images-UI.png)
 ### Scrape IG tab
 1. Type IG URL and then input your username password keyword on it
