@@ -10,8 +10,8 @@ class ScraperApp(QTabWidget):
         instagram_tab = InstagramTab()
         getty_images_tab = GettyImagesTab()
 
-        self.addTab(instagram_tab, "Instagram")
         self.addTab(getty_images_tab, "Getty Images")
+        self.addTab(instagram_tab, "Instagram")
 
         self.setWindowTitle("Scraper App")
 
