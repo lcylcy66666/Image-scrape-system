@@ -9,7 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 import time, os, requests
 
 class Scraper:
-    def __init__(self, driver_path, URL, username, password, keyword) -> None:
+    def __init__(self, driver_path, URL, keyword, username, password) -> None:
         self.URL = URL
         self.username = username
         self.password = password
@@ -96,7 +96,13 @@ class Scraper:
 
 
     def download_pic(self, scrape_image, count):
-        tag_folder = os.path.join(self.keyword)
+        collections_folder = os.path.join(os.path.dirname(__file__), "collections")  # Path to the 'collections' folder
+
+        if not os.path.exists(collections_folder):
+            os.mkdir(collections_folder)
+            print(f"Folder 'collections' created at {collections_folder}")
+
+        tag_folder = os.path.join(collections_folder, self.keyword)
 
         if not os.path.exists(tag_folder):
             os.mkdir(tag_folder)
