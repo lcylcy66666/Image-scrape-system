@@ -1,6 +1,6 @@
 from ..Services.Scraper import Scraper
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QDialog, QTabWidget
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QKeyEvent
 from PyQt5.QtCore import Qt
 
 class InstagramTab(QWidget):
@@ -76,3 +76,11 @@ class InstagramTab(QWidget):
 
         scrap = Scraper(chrome_driver_path, url, username, password, keyword)
         scrap.start_to_scrape()
+    # Override the keyPressEvent method
+    def keyPressEvent(self, event: QKeyEvent):
+        if event.key() == Qt.Key_W and (event.modifiers() & Qt.ControlModifier or event.modifiers() & Qt.MetaModifier):
+            # Quit the whole application
+            QApplication.quit()  
+        else:
+            super().keyPressEvent(event)
+            
