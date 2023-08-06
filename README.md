@@ -33,6 +33,7 @@ After revise that, you can run this py file to scrape.
 # Features
 ## gettyimages scrape
 [gettyimages-scrape-BOT](https://youtu.be/SwVbu-BiF6g)
+
 [Multi-thread-for-scraping](https://youtu.be/DrEFG9UBGoA)
 ## IG picture scrape
 [IG Demo video](https://youtu.be/u9mV5-VXe-M)
